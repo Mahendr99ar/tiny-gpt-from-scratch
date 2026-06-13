@@ -26,48 +26,27 @@ No PyTorch. No autograd. Every forward pass, every backward pass, every attentio
 
 ## Architecture
 Input chars
-
 │
-
 ▼
-
 Token Embedding + Positional Embedding
-
 │
-
 ▼
-
 ┌─────────────────────────┐
-
-│   Transformer Block × N  │
-
+│   Transformer Block × N │
 │  ┌───────────────────┐  │
-
 │  │ Pre-LayerNorm     │  │
-
 │  │ Multi-Head Attn   │  │
-
 │  │ Residual Add      │  │
-
 │  │ Pre-LayerNorm     │  │
-
 │  │ FFN (ReLU)        │  │
-
 │  │ Residual Add      │  │
-
 │  └───────────────────┘  │
-
 └─────────────────────────┘
-
 │
-
 ▼
-
 Final LayerNorm → LM Head → Softmax → Sample
 ---
-
 ## How to run
-
 ```bash
 pip install numpy
 python scaffold.py

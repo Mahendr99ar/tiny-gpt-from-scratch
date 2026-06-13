@@ -1,4 +1,4 @@
-# Tiny GPT From Scratch 
+# Tiny GPT From Scratch 🧠
 
 I wanted to understand how GPT actually works — not at a "attention is query-key-value" level, but at a "here is every matrix multiply and its gradient" level. So I built one from scratch in pure NumPy.
 
@@ -25,42 +25,34 @@ No PyTorch. No autograd. Every forward pass, every backward pass, every attentio
 ---
 
 ## Architecture
+
+```
 Input chars
-│
-▼
+     │
+     ▼
 Token Embedding + Positional Embedding
-│
-▼
+     │
+     ▼
 ┌─────────────────────────┐
-
-│   Transformer Block × N │
-
+│   Transformer Block × N  │
 │  ┌───────────────────┐  │
-
 │  │ Pre-LayerNorm     │  │
-
 │  │ Multi-Head Attn   │  │
-
 │  │ Residual Add      │  │
-
 │  │ Pre-LayerNorm     │  │
-
 │  │ FFN (ReLU)        │  │
-
 │  │ Residual Add      │  │
-
 │  └───────────────────┘  │
-
 └─────────────────────────┘
-
-│
-
-▼
-
+     │
+     ▼
 Final LayerNorm → LM Head → Softmax → Sample
+```
 
 ---
+
 ## How to run
+
 ```bash
 pip install numpy
 python scaffold.py
@@ -70,7 +62,7 @@ python scaffold.py
 
 ## Things I learned building this
 
-- **Causal masking** is simpler than it sounds — you just fill the upper triangle with -inf before softmax so future tokens get zero attention weight
+- **Causal masking** is simpler than it sounds — you just fill the upper triangle with `-inf` before softmax so future tokens get zero attention weight
 - **Backprop through attention** was the most painful part — deriving gradients for Q, K, V projections by hand takes a while but once it works it feels like magic
 - **Multi-head attention** is really just splitting the embedding dimension, running attention in parallel, then concatenating — the reshape and transpose order matters a lot
 - **LayerNorm backward** has a non-obvious gradient — spent more time on this than I expected
@@ -87,11 +79,12 @@ Every time I used PyTorch before, I trusted that `.backward()` was doing the rig
 
 ## Project structure
 
+```
 ├── model.py       # All 166 functions implemented from scratch
-
 ├── scaffold.py    # Training loop, data pipeline, evaluation
-
 └── README.md
+```
+
 ---
 
 *Built on [Deep-ML](https://www.deep-ml.com)*

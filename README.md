@@ -1,12 +1,12 @@
-# Tiny GPT From Scratch 🧠
+# Tiny GPT From Scratch 
 
-A character-level GPT built **entirely in NumPy** — no PyTorch, no TensorFlow, no autograd. Every forward pass, backward pass, attention head, and Adam update is implemented manually from first principles.
+I wanted to understand how GPT actually works — not at a "attention is query-key-value" level, but at a "here is every matrix multiply and its gradient" level. So I built one from scratch in pure NumPy.
+
+No PyTorch. No autograd. Every forward pass, every backward pass, every attention head — written by hand.
 
 ---
 
 ## What's inside
-
-This project builds a complete Transformer language model step by step:
 
 | Component | Details |
 |---|---|
@@ -20,72 +20,85 @@ This project builds a complete Transformer language model step by step:
 | **Optimizer** | Adam with bias correction, manual parameter updates |
 | **Sampling** | Temperature scaling, top-k filtering, generation loop |
 
-**166 functions implemented** — from `build_vocab` all the way to `decode_final_sequence`.
+166 functions total — from `build_vocab` all the way to `decode_final_sequence`.
 
 ---
 
 ## Architecture
-
-```
 Input chars
-     │
-     ▼
-Token Embedding + Positional Embedding
-     │
-     ▼
-┌─────────────────────────┐
-│   Transformer Block × N  │
-│  ┌───────────────────┐  │
-│  │ Pre-LayerNorm     │  │
-│  │ Multi-Head Attn   │  │
-│  │ Residual Add      │  │
-│  │ Pre-LayerNorm     │  │
-│  │ FFN (ReLU)        │  │
-│  │ Residual Add      │  │
-│  └───────────────────┘  │
-└─────────────────────────┘
-     │
-     ▼
-Final LayerNorm → LM Head → Softmax → Sample
-```
 
+│
+
+▼
+
+Token Embedding + Positional Embedding
+
+│
+
+▼
+
+┌─────────────────────────┐
+
+│   Transformer Block × N  │
+
+│  ┌───────────────────┐  │
+
+│  │ Pre-LayerNorm     │  │
+
+│  │ Multi-Head Attn   │  │
+
+│  │ Residual Add      │  │
+
+│  │ Pre-LayerNorm     │  │
+
+│  │ FFN (ReLU)        │  │
+
+│  │ Residual Add      │  │
+
+│  └───────────────────┘  │
+
+└─────────────────────────┘
+
+│
+
+▼
+
+Final LayerNorm → LM Head → Softmax → Sample
 ---
 
 ## How to run
 
 ```bash
-# No dependencies beyond NumPy
 pip install numpy
-
 python scaffold.py
 ```
 
 ---
 
-## Key concepts implemented
+## Things I learned building this
 
-- **Causal self-attention** with masking (no future token leakage)
-- **Backprop through attention** — manual gradients for Q, K, V projections
-- **LayerNorm forward + backward** from scratch
-- **Adam optimizer** — first/second moment estimates, bias correction
-- **Top-k sampling** with temperature for text generation
+- **Causal masking** is simpler than it sounds — you just fill the upper triangle with -inf before softmax so future tokens get zero attention weight
+- **Backprop through attention** was the most painful part — deriving gradients for Q, K, V projections by hand takes a while but once it works it feels like magic
+- **Multi-head attention** is really just splitting the embedding dimension, running attention in parallel, then concatenating — the reshape and transpose order matters a lot
+- **LayerNorm backward** has a non-obvious gradient — spent more time on this than I expected
+- **Top-k sampling with temperature** — small temperature = confident and repetitive, high temperature = creative and chaotic. Makes sense once you see the softmax distribution change live
+- Starting from a bigram model and incrementally adding complexity (embeddings → single head → multi-head → stacked blocks) made the whole thing much easier to debug
 
 ---
 
 ## Why NumPy only?
 
-Building this without any autograd framework forces you to derive and implement every gradient by hand. This gives a deep understanding of what PyTorch/JAX actually do under the hood.
+Every time I used PyTorch before, I trusted that `.backward()` was doing the right thing. Now I've derived and implemented those gradients myself — for attention, for LayerNorm, for residual connections. I know what's happening because I wrote it.
 
 ---
 
 ## Project structure
 
-```
 ├── model.py       # All 166 functions implemented from scratch
-├── scaffold.py    # Training loop, data pipeline, evaluation
-└── README.md
-```
 
+├── scaffold.py    # Training loop, data pipeline, evaluation
+
+└── README.md
 ---
 
-*Built on [Deep-ML](https://www.deep-ml.com) — Tiny GPT From Scratch project.*
+*Built on [Deep-ML](https://www.deep-ml.com)*

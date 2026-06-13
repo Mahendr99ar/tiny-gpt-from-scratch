@@ -34,7 +34,7 @@ Token Embedding + Positional Embedding
      │
      ▼
 ┌─────────────────────────┐
-│   Transformer Block × N  │
+│   Transformer Block × N │
 │  ┌───────────────────┐  │
 │  │ Pre-LayerNorm     │  │
 │  │ Multi-Head Attn   │  │

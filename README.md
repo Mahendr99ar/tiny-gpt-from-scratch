@@ -1,4 +1,4 @@
-# Tiny GPT From Scratch 🧠
+# Tiny GPT From Scratch 
 
 I wanted to understand how GPT actually works — not at a "attention is query-key-value" level, but at a "here is every matrix multiply and its gradient" level. So I built one from scratch in pure NumPy.
 
